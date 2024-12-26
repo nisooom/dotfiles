@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# Get battery status and percentage
+battery_status=$(acpi -b | grep -oP '(?<=: )\w+')
+battery_percent=$(acpi -b | grep -oP '\d+(?=%)')
+
+# File to track the last notified percentage
+LAST_NOTIFY_FILE="/tmp/last_battery_notify"
+
+# Initialize the file if it doesn't exist
+if [ ! -f "$LAST_NOTIFY_FILE" ]; then
+    echo "100" > "$LAST_NOTIFY_FILE"
+fi
+
+# Read the last notified percentage
+last_notified=$(cat "$LAST_NOTIFY_FILE")
+
+# Handle output for i3blocks and color
+if [[ $battery_percent -eq 100 ]]; then
+
+    if [[ $battery_status == "Charging" && $last_notified -lt 100 ]]; then
+        notify-send "Battery Full" "Battery is at 100%. Please remove the charger to avoid overcharging." -u normal
+        echo "$battery_percent" > "$LAST_NOTIFY_FILE"
+    fi
+
+    echo "FULL"
+    echo "00FF00" > current_color
+
+elif [[ $battery_status == "Charging" ]]; then
+    echo "CHR: $battery_percent%"
+    echo "#00FF00" > current_color
+else
+    # Notify based on thresholds only once
+    if [[ $battery_percent -le 25 && $last_notified -gt 25 ]]; then
+        notify-send "Battery Warning" "Battery is at ${battery_percent}%. Keep an eye on the charge." -u normal
+        echo "$battery_percent" > "$LAST_NOTIFY_FILE"
+    elif [[ $battery_percent -le 15 && $last_notified -gt 15 ]]; then
+        notify-send "Battery Critical" "Battery is at ${battery_percent}%. Please plug in your charger." -u critical
+        echo "$battery_percent" > "$LAST_NOTIFY_FILE"
+    elif [[ $battery_percent -le 5 && $last_notified -gt 5 ]]; then
+        notify-send "Battery Very Low" "Battery is very low (${battery_percent}%). Connect to a charger immediately!" -u critical
+        echo "$battery_percent" > "$LAST_NOTIFY_FILE"
+#    elif [[ $battery_percent -le 42 && $last_notified -gt 42 ]]; then
+#	notify-send "Test" "Test" -u critical
+#	echo "$battery_percent" > "$LAST_NOTIFY_FILE"
+   fi
+
+
+    # Output for i3blocks
+    echo "BAT: $battery_percent%"
+    echo "#FF0000" > current_color
+fi

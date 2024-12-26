@@ -1,0 +1,50 @@
+# i3blocks configuration
+
+[date]
+command=date '+%b %d %Y %H:%M:%S'
+interval=1
+label=
+
+[volume]
+command=/home/nish/.config/i3/scripts/volume 1
+label=Volume:
+interval=1
+
+[disk]
+command=/home/nish/.config/i3/scripts/disk
+label=Disk:
+interval=1
+
+[song]
+command=/home/nish/.config/i3/scripts/get_song
+interval=1
+label=Music:
+color=#2ebd59
+
+[charge]
+command=/home/nish/.config/i3/scripts/battery
+interval=30
+color=/home/nish/.config/i3/scripts/battery 1 
+
+[cpu]
+command=mpstat 1 1 | awk '/Average/ {print 100 - $12 "%"}'
+interval=1
+label=CPU %:
+color=#FF0000
+
+[network]
+command=nmcli -t d | grep ':wifi' | cut -d ':' -f 4
+interval=5
+label=W:
+
+[ethernet]
+command=nmcli -t d | grep ':ethernet' | cut -d ':' -f 3
+label=E:
+interval=5
+
+[ip]
+command=/home/nish/.config/i3/scripts/ip
+interval=5
+label=IP:
+color=#00FF00
+

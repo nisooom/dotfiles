@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Get the current playing song title from Spotify using playerctl
+song=$(playerctl --player=spotify metadata title)
+
+# If there's a song playing, display it; otherwise, show "No song playing"
+if [ -n "$song" ]; then
+    echo "$song"
+else
+    echo "Nothing Playing"
+fi

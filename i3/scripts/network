@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Check if Ethernet is connected
+ethernet_status=$(nmcli -t -f DEVICE,STATE d | grep ':ethernet' | cut -d ':' -f 3)
+
+# If Ethernet is connected, display "Connected" in green, else display "Disconnected" in red
+if [ "$ethernet_status" == "connected" ]; then
+    echo -e "\033[32mE: Connected\033[0m"  # Green for Connected
+else
+    echo -e "\033[31mE: Disconnected\033[0m"  # Red for Disconnected
+fi
+

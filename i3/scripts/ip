@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Check if Ethernet (enp3s0) is connected and has an IP address
+ethernet_ip=$(ip -4 addr show enp3s0 | grep inet | awk '{print $2}' | cut -d'/' -f1)
+
+# If Ethernet is connected, return its IP address
+if [ -n "$ethernet_ip" ]; then
+    echo "$ethernet_ip"
+else
+    # If Ethernet is not connected, check Wi-Fi (wlp4s0)
+    wifi_ip=$(ip -4 addr show wlp4s0 | grep inet | awk '{print $2}' | cut -d'/' -f1)
+
+    # If Wi-Fi is connected, return its IP address
+    if [ -n "$wifi_ip" ]; then
+        echo "$wifi_ip"
+    else
+        # If neither is connected, return 0.0.0.0
+        echo "0.0.0.0"
+    fi
+fi
+	
+
